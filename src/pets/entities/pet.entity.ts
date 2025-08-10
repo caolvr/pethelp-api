@@ -1,0 +1,40 @@
+import { Ong } from 'src/ong/entities/ong.entity';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  ForeignKey,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
+
+@Entity('pet')
+export class Pet {
+  @PrimaryGeneratedColumn('uuid')
+  id: number;
+
+  @Column('varchar', { length: 50 })
+  nome: string;
+
+  @Column({ type: 'enum', enum: ['cao', 'gato'] })
+  especie: string;
+
+  @Column({ type: 'enum', enum: ['macho', 'femea'] })
+  sexo: string;
+
+  @Column('varchar', { length: 50 })
+  idade: string;
+
+  @Column({ type: 'enum', enum: ['pequeno', 'medio', 'grande'] })
+  porte: string;
+
+  @Column('varchar', { length: 350, nullable: true })
+  informacoes?: string;
+
+  @Column('varchar', { length: 200, nullable: true })
+  foto_url?: string;
+
+  @ManyToOne(() => Ong)
+  @JoinColumn({ name: 'ong_id' })
+  ong: Ong;
+}
