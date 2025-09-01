@@ -31,6 +31,9 @@ export class Pet {
   @Column('varchar', { length: 350, nullable: true })
   informacoes?: string;
 
+  @Column({ type: 'enum', enum: ['disponivel', 'adotado'] })
+  status?: string;
+
   @Column('varchar', { length: 200, nullable: true })
   foto_url?: string;
 
