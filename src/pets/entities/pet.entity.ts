@@ -11,7 +11,7 @@ import {
 @Entity('pet')
 export class Pet {
   @PrimaryGeneratedColumn('uuid')
-  id: number;
+  id: string;
 
   @Column('varchar', { length: 50 })
   nome: string;
