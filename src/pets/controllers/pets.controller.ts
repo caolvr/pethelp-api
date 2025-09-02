@@ -1,4 +1,12 @@
-import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+} from '@nestjs/common';
 import { PetsService } from '../services/pets.service';
 import { Pet } from '../entities/pet.entity';
 
@@ -23,5 +31,10 @@ export class PetsController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.petsService.remove(id);
+  }
+
+  @Put(':id')
+  update(@Param('id') id: string, @Body() pet: Pet) {
+    return this.petsService.update(id, pet);
   }
 }
