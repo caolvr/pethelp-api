@@ -13,7 +13,7 @@ export class PetsService {
   }
 
   findOne(id: string): Promise<Pet | null> {
-    return this.petsRepository.findOneBy({ id: parseInt(id) });
+    return this.petsRepository.findOneBy({ id: id });
   }
 
   async remove(id: string): Promise<void> {
@@ -21,11 +21,11 @@ export class PetsService {
   }
 
   async create(createPetDto: CreatePetDto): Promise<Pet> {
-    const pet = this.petsRepository.create(createPetDto); 
+    const pet = this.petsRepository.create(createPetDto);
     return await this.petsRepository.save(pet);
   }
 
-  async update(id: number, pet: Pet): Promise<Pet> {
+  async update(id: string, pet: Pet): Promise<Pet> {
     await this.petsRepository.update(id, pet);
     const updatedPet = await this.petsRepository.findOneBy({ id });
     if (!updatedPet) {
