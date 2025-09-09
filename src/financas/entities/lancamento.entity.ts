@@ -22,16 +22,16 @@ export class Lancamento {
   @Column({ length: 100 })
   descricao: string;
 
-  @Column({ type: 'date' })
+  @Column({ type: 'date', nullable: true })
   data_vencimento: Date;
 
   @Column({ type: 'boolean' })
   pago: boolean;
 
-  @Column({ type: 'date' })
+  @Column({ type: 'date', nullable: true })
   data_pagamento: Date;
 
-  @Column({ length: 150 })
+  @Column({ length: 150, nullable: true })
   observacoes: string;
 
   @ManyToOne(() => CategoriaLancamento, (categoria) => categoria.lancamentos)
