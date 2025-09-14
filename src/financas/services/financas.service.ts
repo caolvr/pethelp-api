@@ -15,45 +15,73 @@ export class FinancasService {
     private categoriaLancamentoRepository: Repository<CategoriaLancamento>,
   ) {}
 
-  findAll(): Promise<Lancamento[]> {
-    return this.financasRepository.find();
+  findAll(ongId: string): Promise<Lancamento[]> {
+    return this.financasRepository.find({ where: { ong: { id: ongId } } });
   }
 
-  findAllCategories(): Promise<CategoriaLancamento[]> {
-    return this.categoriaLancamentoRepository.find();
+  findAllCategories(ongId: string): Promise<CategoriaLancamento[]> {
+    return this.categoriaLancamentoRepository.find({
+      where: { ong: { id: ongId } },
+    });
   }
 
-  findOne(id: string): Promise<Lancamento | null> {
-    return this.financasRepository.findOneBy({ id: id });
+  findOne(id: string, ongId: string): Promise<Lancamento | null> {
+    return this.financasRepository.findOne({
+      where: { id: id, ong: { id: ongId } },
+    });
   }
 
-  findOneCategory(id: string): Promise<CategoriaLancamento | null> {
-    return this.categoriaLancamentoRepository.findOneBy({ id: id });
+  findOneCategory(
+    id: string,
+    ongId: string,
+  ): Promise<CategoriaLancamento | null> {
+    return this.categoriaLancamentoRepository.findOne({
+      where: { id: id, ong: { id: ongId } },
+    });
   }
 
-  async remove(id: string): Promise<void> {
-    await this.financasRepository.delete(id);
+  async remove(id: string, ongId: string): Promise<void> {
+    await this.financasRepository.delete({ id: id, ong: { id: ongId } });
   }
 
-  async removeCategory(id: string): Promise<void> {
-    await this.categoriaLancamentoRepository.delete(id);
+  async removeCategory(id: string, ongId: string): Promise<void> {
+    await this.categoriaLancamentoRepository.delete({
+      id: id,
+      ong: { id: ongId },
+    });
   }
 
-  async create(createLancamentoDto: CreateLancamentoDto): Promise<Lancamento> {
-    const lancamento = this.financasRepository.create(createLancamentoDto);
+  async create(
+    createLancamentoDto: CreateLancamentoDto,
+    ongId: string,
+  ): Promise<Lancamento> {
+    const lancamento = this.financasRepository.create({
+      ...createLancamentoDto,
+      ong: { id: ongId },
+    });
     return await this.financasRepository.save(lancamento);
   }
 
   async createCategory(
     createCategoriaDto: CreateCategoriaDto,
+    ongId: string,
   ): Promise<CategoriaLancamento> {
-    const categoria =
-      this.categoriaLancamentoRepository.create(createCategoriaDto);
+    const categoria = this.categoriaLancamentoRepository.create({
+      ...createCategoriaDto,
+      ong: { id: ongId },
+    });
     return await this.categoriaLancamentoRepository.save(categoria);
   }
 
-  async update(id: string, lancamento: Lancamento): Promise<Lancamento> {
-    await this.financasRepository.update(id, lancamento);
+  async update(
+    id: string,
+    lancamento: Lancamento,
+    ongId: string,
+  ): Promise<Lancamento> {
+    await this.financasRepository.update(
+      { id, ong: { id: ongId } },
+      lancamento,
+    );
     const updatedLancamento = await this.financasRepository.findOneBy({ id });
     if (!updatedLancamento) {
       throw new Error(`Lancamento com o id ${id} não encontrado após update.`);
@@ -64,8 +92,12 @@ export class FinancasService {
   async updateCategory(
     id: string,
     categoria: CategoriaLancamento,
+    ongId: string,
   ): Promise<CategoriaLancamento> {
-    await this.categoriaLancamentoRepository.update(id, categoria);
+    await this.categoriaLancamentoRepository.update(
+      { id, ong: { id: ongId } },
+      categoria,
+    );
     const updatedCategoria = await this.categoriaLancamentoRepository.findOneBy(
       { id },
     );
