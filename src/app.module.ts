@@ -8,9 +8,16 @@ import { DatabaseModule } from './database/database.module';
 import { UsersModule } from './users/users.module';
 import { OngModule } from './ong/ong.module';
 import { EmailModule } from './email/email.module';
+import { ConfigModule } from '@nestjs/config';
+import jwtConfig from './auth/config/jwt.config';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [jwtConfig],
+      envFilePath: ['.env'],
+    }),
     PetsModule,
     OngModule,
     FinancasModule,
