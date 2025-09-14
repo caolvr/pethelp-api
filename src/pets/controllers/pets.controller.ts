@@ -6,36 +6,54 @@ import {
   Param,
   Post,
   Put,
+  UseGuards,
 } from '@nestjs/common';
 import { PetsService } from '../services/pets.service';
 import { Pet } from '../entities/pet.entity';
 import { CreatePetDto } from '../dtos/CreatePetDto';
+import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
 @Controller('pets')
 export class PetsController {
   constructor(private readonly petsService: PetsService) {}
 
+  @UseGuards(JwtAuthGuard)
   @Get()
-  findAll() {
-    return this.petsService.findAll();
+  findAll(@CurrentUser('ongId') ongId: string) {
+    return this.petsService.findAll(ongId);
   }
 
+  @Get('adocao')
+  findAllAdocao() {
+    return this.petsService.findAllAdocao();
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.petsService.findOne(id);
+  findOne(@Param('id') id: string, @CurrentUser('ongId') ongId: string) {
+    return this.petsService.findOne(id, ongId);
   }
 
-  @Post() create(@Body() pet: CreatePetDto) {
-    return this.petsService.create(pet);
+  @UseGuards(JwtAuthGuard)
+  @Post()
+  create(@CurrentUser('ongId') ongId: string, @Body() pet: CreatePetDto) {
+    return this.petsService.create(pet, ongId);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.petsService.remove(id);
+  remove(@Param('id') id: string, @CurrentUser('ongId') ongId: string) {
+    return this.petsService.remove(id, ongId);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Put(':id')
-  update(@Param('id') id: string, @Body() pet: Pet) {
-    return this.petsService.update(id, pet);
+  update(
+    @Param('id') id: string,
+    @Body() pet: Pet,
+    @CurrentUser('ongId') ongId: string,
+  ) {
+    return this.petsService.update(id, pet, ongId);
   }
 }
