@@ -6,15 +6,19 @@ import {
   Param,
   Post,
   Put,
+  UseGuards,
 } from '@nestjs/common';
 import { OngService } from '../services/ong.service';
 import { Ong } from '../entities/ong.entity';
 import { CreateOngDto } from '../dtos/CreateOngDto';
+import { TokenValidationGuard } from 'src/auth/guards/token-validation.guard';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
 @Controller('ongs')
 export class OngController {
   constructor(private readonly ongService: OngService) {}
 
+  @UseGuards(JwtAuthGuard)
   @Get()
   findAll() {
     return this.ongService.findAll();
@@ -27,11 +31,6 @@ export class OngController {
 
   @Post() create(@Body() ong: CreateOngDto) {
     return this.ongService.create(ong);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.ongService.remove(id);
   }
 
   @Put(':id')
