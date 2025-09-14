@@ -1,11 +1,15 @@
-import { Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Ong } from '../entities/ong.entity';
 import { CreateOngDto } from '../dtos/CreateOngDto';
 import { User } from 'src/users/entities/user.entity';
-import * as bcrypt from 'bcrypt';
 import { EmailService } from 'src/email/services/email.service';
+import { UserService } from 'src/users/services/user.service';
 
 @Injectable()
 export class OngService {
@@ -14,17 +18,30 @@ export class OngService {
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
     private readonly emailService: EmailService,
+    private readonly userService: UserService,
   ) {}
 
   findAll(): Promise<Ong[]> {
     return this.ongsRepository.find();
   }
 
-  findOne(id: string): Promise<Ong | null> {
-    return this.ongsRepository.findOneBy({ id: id });
+  async findOne(id: string): Promise<Ong | null> {
+    const ong = await this.ongsRepository.findOneBy({ id: id });
+
+    console.log(ong);
+    if (ong === null) {
+      throw new NotFoundException('ONG não encontrada');
+    }
+
+    return ong;
   }
 
   async remove(id: string): Promise<void> {
+    const ong = await this.findOne(id);
+    if (!ong) {
+      throw new NotFoundException('ONG não encontrada para remoção');
+    }
+
     await this.ongsRepository.delete(id);
   }
 
@@ -34,13 +51,15 @@ export class OngService {
     const ong = this.ongsRepository.create(ongData);
     await this.ongsRepository.save(ong);
 
-    const senhaHash = await bcrypt.hash('123546', 10);
-    const user = this.userRepository.create({
-      ...responsavel,
-      senha: senhaHash,
-      ong,
-    });
-    await this.userRepository.save(user);
+    try {
+      await this.userService.create({
+        ...responsavel,
+      });
+    } catch (e) {
+      if (e instanceof ConflictException) {
+        throw new ConflictException(e.message);
+      }
+    }
 
     try {
       await this.emailService.sendMail(
