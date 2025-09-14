@@ -31,6 +31,9 @@ export class User {
   @Column({ default: true })
   ativo: boolean;
 
+  @Column({ default: false })
+  is_admin: boolean;
+
   @ManyToOne(() => Ong)
   @JoinColumn({ name: 'ong_id' })
   ong: Ong;
