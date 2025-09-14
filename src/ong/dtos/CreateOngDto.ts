@@ -14,40 +14,40 @@ import { CreateUserDto } from 'src/users/dtos/CreateUserDto';
 export class CreateOngDto {
   @IsString()
   @MinLength(2)
-  razao_social: string;
+  readonly razao_social: string;
 
   @IsString()
-  cnpj: string;
+  readonly cnpj: string;
 
   @IsEmail()
-  email: string;
+  readonly email: string;
 
   @IsString()
-  celular: string;
+  readonly celular: string;
 
   @IsString()
-  cep: string;
+  readonly cep: string;
 
   @IsString()
-  estado_uf: string;
+  readonly estado_uf: string;
 
   @IsString()
-  cidade: string;
+  readonly cidade: string;
 
   @IsString()
-  logradouro: string;
+  readonly logradouro: string;
 
   @IsString()
-  bairro: string;
+  readonly bairro: string;
 
   @IsString()
-  numero: string;
+  readonly numero: string;
 
   @IsString()
-  complemento: string;
+  readonly complemento: string;
 
   @IsString()
-  referencia: string;
+  readonly referencia: string;
 
-  responsavel: CreateUserDto;
+  readonly responsavel: CreateUserDto;
 }
