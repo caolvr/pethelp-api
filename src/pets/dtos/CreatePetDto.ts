@@ -12,38 +12,35 @@ import {
 export class CreatePetDto {
   @IsString()
   @MinLength(2)
-  nome: string;
+  readonly nome: string;
 
   @IsString()
   @IsEnum(['cao', 'gato'])
-  especie: string;
+  readonly especie: string;
 
   @IsString()
-  idade: string;
+  readonly idade: string;
 
   @IsOptional()
   @IsString()
-  raca?: string;
+  readonly raca?: string;
 
   @IsEnum(['macho', 'femea'])
-  sexo: string;
+  readonly sexo: string;
 
   @IsEnum(['pequeno', 'medio', 'grande'])
-  porte: string;
+  readonly porte: string;
 
   @IsOptional()
   @IsString()
   @MinLength(0)
-  informacoes?: string;
+  readonly informacoes?: string;
 
   @IsOptional()
   @IsEnum(['disponivel', 'adotado'])
-  status?: string;
+  readonly status?: string;
 
   @IsOptional()
   @IsString()
-  foto_url?: string;
-
-  @IsUUID()
-  ong_id?: string;
+  readonly foto_url?: string;
 }
