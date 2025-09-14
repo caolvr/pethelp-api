@@ -11,34 +11,36 @@ import {
   IsDecimal,
   IsNumber,
   IsBoolean,
+  IsNotEmpty,
 } from 'class-validator';
-import { CategoriaLancamento } from '../entities/categoria-lancamento.entity';
 
 export class CreateLancamentoDto {
   @IsDate()
-  data: Date;
+  readonly data: Date;
 
   @IsDecimal()
-  valor: string;
+  @IsNotEmpty()
+  readonly valor: string;
 
   @IsString()
-  descricao: string;
+  @IsNotEmpty()
+  readonly descricao: string;
 
   @IsDate()
-  data_vencimento: Date;
+  readonly data_vencimento: Date;
 
   @IsBoolean()
-  pago: boolean;
+  readonly pago: boolean;
 
   @IsDate()
-  data_pagamento: Date;
+  readonly data_pagamento: Date;
 
   @IsString()
-  observacoes: string;
+  readonly observacoes: string;
 
   @IsUUID()
-  categoria_id?: string;
+  readonly categoria_id?: string;
 
   @IsUUID()
-  ong_id?: string;
+  readonly ong_id?: string;
 }

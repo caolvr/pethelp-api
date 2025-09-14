@@ -12,11 +12,11 @@ import {
 export class CreateCategoriaDto {
   @IsString()
   @MinLength(2)
-  nome: string;
+  readonly nome: string;
 
   @IsEnum(['receita', 'despesa'])
-  tipo: string;
+  readonly tipo: string;
 
   @IsUUID()
-  ong_id?: string;
+  readonly ong_id?: string;
 }
