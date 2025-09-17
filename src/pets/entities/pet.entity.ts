@@ -22,8 +22,8 @@ export class Pet {
   @Column({ type: 'enum', enum: ['macho', 'femea'] })
   sexo: string;
 
-  @Column('varchar', { length: 50 })
-  idade: string;
+  @Column({ type: 'date', nullable: true })
+  data_nascimento: Date | null;
 
   @Column({ type: 'enum', enum: ['pequeno', 'medio', 'grande'] })
   porte: string;
