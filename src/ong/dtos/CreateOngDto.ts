@@ -8,6 +8,7 @@ import {
   IsUUID,
   IsUrl,
   IsEmail,
+  IsDefined,
 } from 'class-validator';
 import { CreateUserDto } from 'src/users/dtos/CreateUserDto';
 
@@ -49,5 +50,6 @@ export class CreateOngDto {
   @IsString()
   readonly referencia: string;
 
+  @IsDefined()
   readonly responsavel: CreateUserDto;
 }

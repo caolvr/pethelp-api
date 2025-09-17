@@ -18,10 +18,8 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 export class OngController {
   constructor(private readonly ongService: OngService) {}
 
-  @UseGuards(JwtAuthGuard)
-  @Get()
-  findAll() {
-    return this.ongService.findAll();
+  @Post() create(@Body() ong: CreateOngDto) {
+    return this.ongService.create(ong);
   }
 
   @Get(':id')
@@ -29,8 +27,10 @@ export class OngController {
     return this.ongService.findOne(id);
   }
 
-  @Post() create(@Body() ong: CreateOngDto) {
-    return this.ongService.create(ong);
+  @UseGuards(JwtAuthGuard)
+  @Get()
+  findAll() {
+    return this.ongService.findAll();
   }
 
   @Put(':id')
