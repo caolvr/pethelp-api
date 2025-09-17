@@ -33,6 +33,7 @@ export class CategoriaController {
     return this.financasService.findOneCategory(id, ongId);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Post()
   createCategory(
     @Body() categoria: CreateCategoriaDto,
@@ -41,11 +42,13 @@ export class CategoriaController {
     return this.financasService.createCategory(categoria, ongId);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Delete(':id')
   removeCategory(@Param('id') id: string, @CurrentUser('ongId') ongId: string) {
     return this.financasService.removeCategory(id, ongId);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Put(':id')
   update(
     @Param('id') id: string,
