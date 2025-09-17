@@ -15,32 +15,32 @@ import {
 } from 'class-validator';
 
 export class CreateLancamentoDto {
-  @IsDate()
-  readonly data: Date;
+  @IsString()
+  readonly data: string;
 
-  @IsDecimal()
+  @IsNumber()
   @IsNotEmpty()
-  readonly valor: string;
+  readonly valor: number;
 
   @IsString()
   @IsNotEmpty()
   readonly descricao: string;
 
-  @IsDate()
-  readonly data_vencimento: Date;
+  @IsOptional()
+  @IsString()
+  readonly data_vencimento?: string;
 
   @IsBoolean()
   readonly pago: boolean;
 
-  @IsDate()
-  readonly data_pagamento: Date;
-
+  @IsOptional()
   @IsString()
-  readonly observacoes: string;
+  readonly data_pagamento?: string;
+
+  @IsOptional()
+  @IsString()
+  readonly observacoes?: string;
 
   @IsUUID()
   readonly categoria_id?: string;
-
-  @IsUUID()
-  readonly ong_id?: string;
 }

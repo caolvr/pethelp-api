@@ -15,8 +15,5 @@ export class CreateCategoriaDto {
   readonly nome: string;
 
   @IsEnum(['receita', 'despesa'])
-  readonly tipo: string;
-
-  @IsUUID()
-  readonly ong_id?: string;
+  readonly tipo_categoria: string;
 }
