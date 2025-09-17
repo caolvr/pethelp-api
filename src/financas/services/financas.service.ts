@@ -16,7 +16,10 @@ export class FinancasService {
   ) {}
 
   findAll(ongId: string): Promise<Lancamento[]> {
-    return this.financasRepository.find({ where: { ong: { id: ongId } } });
+    return this.financasRepository.find({
+      where: { ong: { id: ongId } },
+      relations: ['ong', 'categoria'],
+    });
   }
 
   findAllCategories(ongId: string): Promise<CategoriaLancamento[]> {
@@ -27,7 +30,8 @@ export class FinancasService {
 
   findOne(id: string, ongId: string): Promise<Lancamento | null> {
     return this.financasRepository.findOne({
-      where: { id: id, ong: { id: ongId } },
+      where: { id, ong: { id: ongId } },
+      relations: ['ong', 'categoria'],
     });
   }
 
@@ -54,23 +58,37 @@ export class FinancasService {
   async create(
     createLancamentoDto: CreateLancamentoDto,
     ongId: string,
-  ): Promise<Lancamento> {
+  ): Promise<Lancamento | null> {
+    console.log(createLancamentoDto);
     const lancamento = this.financasRepository.create({
       ...createLancamentoDto,
+      valor: parseFloat(createLancamentoDto.valor.toFixed(2)),
       ong: { id: ongId },
+      categoria: createLancamentoDto.categoria_id
+        ? ({ id: createLancamentoDto.categoria_id } as any)
+        : undefined,
     });
-    return await this.financasRepository.save(lancamento);
+    const saved = await this.financasRepository.save(lancamento);
+    return this.financasRepository.findOne({
+      where: { id: saved.id },
+      relations: ['ong', 'categoria'],
+    });
   }
 
   async createCategory(
     createCategoriaDto: CreateCategoriaDto,
     ongId: string,
   ): Promise<CategoriaLancamento> {
-    const categoria = this.categoriaLancamentoRepository.create({
-      ...createCategoriaDto,
-      ong: { id: ongId },
-    });
-    return await this.categoriaLancamentoRepository.save(categoria);
+    try {
+      const categoria = this.categoriaLancamentoRepository.create({
+        ...createCategoriaDto,
+        ong: { id: ongId },
+      });
+      return await this.categoriaLancamentoRepository.save(categoria);
+    } catch (error) {
+      console.error('Erro ao criar categoria:', error);
+      throw new Error(`Erro ao criar categoria: ${error.message}`);
+    }
   }
 
   async update(

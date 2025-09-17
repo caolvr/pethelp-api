@@ -17,7 +17,7 @@ export class Lancamento {
   data: Date;
 
   @Column({ type: 'decimal', precision: 10, scale: 2 })
-  valor: string;
+  valor: number;
 
   @Column({ length: 100 })
   descricao: string;
