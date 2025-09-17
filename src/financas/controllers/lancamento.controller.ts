@@ -15,7 +15,6 @@ import { TokenValidationGuard } from 'src/auth/guards/token-validation.guard';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 
-@UseGuards(TokenValidationGuard)
 @Controller('financas')
 export class LancamentosController {
   constructor(private readonly financasService: FinancasService) {}
