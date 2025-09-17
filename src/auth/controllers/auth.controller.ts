@@ -1,7 +1,16 @@
-import { Controller, Post, Body, Request, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Request,
+  UseGuards,
+  Res,
+} from '@nestjs/common';
 import { LoginDto } from '../dtos/LoginDto';
 import { AuthService } from '../services/auth.service';
 import { AuthGuard } from '@nestjs/passport';
+import { Response } from 'express';
+import { SetPasswordDto } from '../dtos/SetPasswordDto';
 
 @Controller('auth')
 export class AuthController {
@@ -17,9 +26,44 @@ export class AuthController {
     @Body() body: { to: string; subject: string; text: string },
   ) {}
 
+  @Post('set-password')
+  async setPassword(@Body() dto: SetPasswordDto) {
+    console.log(dto.token);
+    return this.authService.setPassword(dto.token, dto.senha);
+  }
+
   @UseGuards(AuthGuard('local'))
   @Post('login')
-  login(@Request() req) {
-    return this.authService.login(req.user);
+  async loginWithCookie(
+    @Request() req,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const { access_token } = await this.authService.login(req.user);
+    console.log(access_token);
+
+    const maxAgeMs = 60 * 60 * 1000;
+
+    res.cookie('access_token', access_token, {
+      httpOnly: true,
+      secure: false,
+      sameSite: 'lax',
+      path: '/',
+      maxAge: maxAgeMs,
+    });
+
+    return { access_token };
+  }
+
+  @Post('logout')
+  async logout(@Res({ passthrough: true }) res: Response) {
+    res.cookie('access_token', '', {
+      httpOnly: true,
+      secure: false,
+      sameSite: 'lax',
+      path: '/',
+      expires: new Date(0),
+    });
+
+    return { message: 'Logout realizado com sucesso' };
   }
 }

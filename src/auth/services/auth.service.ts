@@ -1,4 +1,9 @@
-import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  Inject,
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { EmailService } from 'src/email/services/email.service';
 import { UserService } from 'src/users/services/user.service';
 import { LoginDto } from '../dtos/LoginDto';
@@ -9,6 +14,8 @@ import { HashingService } from './hashing.service';
 import jwtConfig from '../config/jwt.config';
 import { ConfigType } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
+import { PasswordResetToken } from '../entities/password-reset-tokens.entity';
+import { createHash, randomBytes } from 'crypto';
 
 @Injectable()
 export class AuthService {
@@ -18,7 +25,17 @@ export class AuthService {
     @Inject(jwtConfig.KEY)
     private readonly jwtConfiguration: ConfigType<typeof jwtConfig>,
     private readonly jwtService: JwtService,
+    @InjectRepository(PasswordResetToken)
+    private readonly resetTokenRepo: Repository<PasswordResetToken>,
   ) {}
+
+  private generateToken(): string {
+    return randomBytes(32).toString('hex');
+  }
+
+  private hashToken(token: string): string {
+    return createHash('sha256').update(token).digest('hex');
+  }
 
   async forgotPassword(email: string): Promise<void> {
     const user = await this.userService.findEmail(email);
@@ -32,6 +49,7 @@ export class AuthService {
 
     if (user) {
       passwordIsValid = await this.hashingService.compare(senha, user.senha);
+      console.log(passwordIsValid);
 
       if (passwordIsValid) {
         const { senha, ...result } = user;
@@ -60,50 +78,33 @@ export class AuthService {
     };
   }
 
-  // async login(
-  //   loginDto: LoginDto,
-  // ): Promise<{ access_token: string; token_type: string; expires_in: number }> {
-  //   let passwordIsValid = false;
+  async setPassword(token: string, senha: string) {
+    const tokenHash = this.hashToken(token);
 
-  //   const user = await this.userService.findOne(loginDto.email);
+    const prt = await this.resetTokenRepo.findOne({
+      where: { tokenHash },
+      relations: ['user'],
+    });
 
-  //   if (user) {
-  //     passwordIsValid = await this.hashingService.compare(
-  //       loginDto.senha,
-  //       user.senha,
-  //     );
-  //   }
+    const now = new Date();
 
-  //   if (!user) {
-  //     throw new UnauthorizedException('Usuário não encontrado');
-  //   }
+    if (!prt || prt.used_at || prt.expires_at < now) {
+      throw new UnauthorizedException('Token inválido ou expirado');
+    }
 
-  //   if (!user.ong) {
-  //     throw new UnauthorizedException('Usuário sem ONG associada');
-  //   }
+    const hashed = await this.hashingService.hash(senha);
+    await this.userService.update({ id: prt.user.id, senha: hashed });
 
-  //   if (!passwordIsValid) {
-  //     throw new UnauthorizedException('Credenciais inválidas');
-  //   }
+    prt.used_at = now;
+    await this.resetTokenRepo.save(prt);
 
-  //   const accessToken = await this.jwtService.signAsync(
-  //     {
-  //       sub: user.id,
-  //       email: user.email,
-  //       ongId: user.ong.id,
-  //     },
-  //     {
-  //       audience: this.jwtConfiguration.audience,
-  //       issuer: this.jwtConfiguration.issuer,
-  //       secret: this.jwtConfiguration.secret,
-  //       expiresIn: this.jwtConfiguration.expiresIn,
-  //     },
-  //   );
+    await this.resetTokenRepo
+      .createQueryBuilder()
+      .update(PasswordResetToken)
+      .set({ used_at: () => 'CURRENT_TIMESTAMP' })
+      .where('userId = :userId AND used_at IS NULL', { userId: prt.user.id })
+      .execute();
 
-  //   return {
-  //     access_token: accessToken,
-  //     token_type: 'Bearer',
-  //     expires_in: this.jwtConfiguration.expiresIn,
-  //   };
-  // }
+    return { message: 'Senha definida com sucesso' };
+  }
 }

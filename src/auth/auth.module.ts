@@ -12,6 +12,8 @@ import { UsersModule } from 'src/users/users.module';
 import { PassportModule } from '@nestjs/passport';
 import { LocalStrategy } from './strategies/local.strategy';
 import { JwtStrategy } from './strategies/jwt.strategy';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { PasswordResetToken } from './entities/password-reset-tokens.entity';
 
 @Module({
   imports: [
@@ -19,6 +21,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
     UsersModule,
     JwtModule.registerAsync(jwtConfig.asProvider()),
     PassportModule,
+    TypeOrmModule.forFeature([PasswordResetToken]),
   ],
   controllers: [AuthController],
   providers: [
