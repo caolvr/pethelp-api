@@ -6,6 +6,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { PetsService } from '../services/pets.service';
@@ -13,20 +14,44 @@ import { Pet } from '../entities/pet.entity';
 import { CreatePetDto } from '../dtos/CreatePetDto';
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { BlackbazeService } from '../services/blackbaze.service';
+import { FilterAdocaoDto } from '../dtos/FilterAdocaoDto';
 
 @Controller('pets')
 export class PetsController {
-  constructor(private readonly petsService: PetsService) {}
+  constructor(
+    private readonly petsService: PetsService,
+    private readonly blackbazeService: BlackbazeService,
+  ) {}
 
   @UseGuards(JwtAuthGuard)
   @Get()
-  findAll(@CurrentUser('ongId') ongId: string) {
-    return this.petsService.findAll(ongId);
+  findAll(
+    @CurrentUser('ongId') ongId: string,
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
+  ) {
+    return this.petsService.findAll(ongId, {
+      page: page ? parseInt(page, 10) : 1,
+      limit: limit ? parseInt(limit, 10) : 10,
+    });
   }
 
   @Get('adocao')
-  findAllAdocao() {
-    return this.petsService.findAllAdocao();
+  findAllAdocao(@Query() query: FilterAdocaoDto) {
+    return this.petsService.findAllAdocao(query);
+  }
+
+  // @Get('adocao')
+  // findAllAdocao() {
+  //   return this.petsService.findAllAdocao();
+  // }
+
+  @Get('upload-url')
+  async getUploadUrl() {
+    const res = await this.blackbazeService.getUploadUrl();
+    console.log(res);
+    return res;
   }
 
   @UseGuards(JwtAuthGuard)
