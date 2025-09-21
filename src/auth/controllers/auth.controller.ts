@@ -28,7 +28,6 @@ export class AuthController {
 
   @Post('set-password')
   async setPassword(@Body() dto: SetPasswordDto) {
-    console.log(dto.token);
     return this.authService.setPassword(dto.token, dto.senha);
   }
 
@@ -39,7 +38,6 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response,
   ) {
     const { access_token } = await this.authService.login(req.user);
-    console.log(access_token);
 
     const maxAgeMs = 60 * 60 * 1000;
 
