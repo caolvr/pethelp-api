@@ -5,6 +5,7 @@ import { Lancamento } from '../entities/lancamento.entity';
 import { CategoriaLancamento } from '../entities/categoria-lancamento.entity';
 import { CreateLancamentoDto } from '../dtos/CreateLancamentoDto';
 import { CreateCategoriaDto } from '../dtos/CreateCategoriaDto';
+import { UpdateLancamentoDto } from '../dtos/UpdateLancamentoDto';
 
 @Injectable()
 export class FinancasService {
@@ -93,18 +94,37 @@ export class FinancasService {
 
   async update(
     id: string,
-    lancamento: Lancamento,
+    lancamento: UpdateLancamentoDto,
     ongId: string,
   ): Promise<Lancamento> {
-    await this.financasRepository.update(
-      { id, ong: { id: ongId } },
-      lancamento,
-    );
-    const updatedLancamento = await this.financasRepository.findOneBy({ id });
-    if (!updatedLancamento) {
-      throw new Error(`Lancamento com o id ${id} não encontrado após update.`);
+    try {
+      const { categoria_id, ...rest } = lancamento as any;
+      const updatePayload: any = { ...rest };
+      if (categoria_id !== undefined) {
+        updatePayload.categoria = categoria_id
+          ? ({ id: categoria_id } as any)
+          : null;
+      }
+
+      await this.financasRepository.update(
+        { id: id, ong: { id: ongId } },
+        updatePayload,
+      );
+
+      const updatedLancamento = await this.financasRepository.findOne({
+        where: { id: id, ong: { id: ongId } },
+        relations: ['ong', 'categoria'],
+      });
+      if (!updatedLancamento) {
+        throw new Error(
+          `Lancamento com o id ${id} não encontrado após update.`,
+        );
+      }
+      return updatedLancamento;
+    } catch (error) {
+      console.error('Erro ao atualizar lancamento:', error);
+      throw new Error(`Erro ao atualizar lancamento: ${error.message}`);
     }
-    return updatedLancamento;
   }
 
   async updateCategory(
