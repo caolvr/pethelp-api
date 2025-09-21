@@ -43,7 +43,6 @@ export class TokenValidationGuard implements CanActivate {
         token,
         this.jwtConfiguration,
       );
-      console.log(payloadToken);
     } catch (error) {
       throw new UnauthorizedException('Token inválido');
     }
