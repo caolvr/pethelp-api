@@ -17,7 +17,7 @@ import { Pet } from '../entities/pet.entity';
 import { CreatePetDto } from '../dtos/CreatePetDto';
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
-import { BlackbazeService } from '../services/blackbaze.service';
+import { BlackbazeService } from '../services/backblaze.service';
 import { FilterAdocaoDto } from '../dtos/FilterAdocaoDto';
 import { IsAdmin } from 'src/auth/decorators/is-admin.decorator';
 import { UpdatePetDto } from '../dtos/UpdatePetDto';
