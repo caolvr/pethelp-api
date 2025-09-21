@@ -94,15 +94,15 @@ export class OngService {
         },
       );
 
-      try {
-        await this.emailService.sendMail(
-          responsavel.email,
-          'Bem-vindo à Plataforma PetHelp',
-          `Olá ${responsavel.nome},\n\nSua ONG foi registrada com sucesso na plataforma PetHelp.\nCrie uma senha para sua conta: http://localhost:3001/login/create-password?token=${token}\nEquipe PetHelp`,
-        );
-      } catch (error) {
-        console.error('Erro ao enviar e-mail ao responsável:', error);
-      }
+      // try {
+      //   await this.emailService.sendMail(
+      //     responsavel.email,
+      //     'Bem-vindo à Plataforma PetHelp',
+      //     `Olá ${responsavel.nome},\n\nSua ONG foi registrada com sucesso na plataforma PetHelp.\nCrie uma senha para sua conta: http://localhost:3001/login/create-password?token=${token}\nEquipe PetHelp`,
+      //   );
+      // } catch (error) {
+      //   console.error('Erro ao enviar e-mail ao responsável:', error);
+      // }
 
       return ong;
     } catch (e: any) {

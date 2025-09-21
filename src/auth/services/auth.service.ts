@@ -27,6 +27,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
     @InjectRepository(PasswordResetToken)
     private readonly resetTokenRepo: Repository<PasswordResetToken>,
+    private readonly emailService: EmailService,
   ) {}
 
   private generateToken(): string {
@@ -93,7 +94,7 @@ export class AuthService {
     }
 
     const hashed = await this.hashingService.hash(senha);
-    await this.userService.update({ id: prt.user.id, senha: hashed });
+    await this.userService.updatePassword(prt.user.id, hashed);
 
     prt.used_at = now;
     await this.resetTokenRepo.save(prt);
@@ -106,5 +107,25 @@ export class AuthService {
       .execute();
 
     return { message: 'Senha definida com sucesso' };
+  }
+
+  async sendLinkForgotPassword(email: string): Promise<void> {
+    const user = await this.userService.findEmail(email);
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    const token = this.generateToken();
+    const tokenHash = this.hashToken(token);
+
+    await this.resetTokenRepo.save(
+      this.resetTokenRepo.create({
+        user,
+        tokenHash,
+        expires_at: new Date(Date.now() + 1 * 60 * 60 * 1000),
+      }),
+    );
+
+    await this.emailService.sendForgotPasswordMail(email, token);
   }
 }

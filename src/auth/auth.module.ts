@@ -14,6 +14,7 @@ import { LocalStrategy } from './strategies/local.strategy';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { PasswordResetToken } from './entities/password-reset-tokens.entity';
+import { EmailService } from 'src/email/services/email.service';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { PasswordResetToken } from './entities/password-reset-tokens.entity';
     AuthService,
     LocalStrategy,
     JwtStrategy,
+    EmailService,
   ],
   exports: [HashingService, JwtModule],
 })

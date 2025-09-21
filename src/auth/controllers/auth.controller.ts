@@ -11,15 +11,16 @@ import { AuthService } from '../services/auth.service';
 import { AuthGuard } from '@nestjs/passport';
 import { Response } from 'express';
 import { SetPasswordDto } from '../dtos/SetPasswordDto';
+import { EmailService } from 'src/email/services/email.service';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('forgot-password')
-  async forgotPassword(
-    @Body() body: { to: string; subject: string; text: string },
-  ) {}
+  async forgotPassword(@Body() body: { email: string }) {
+    await this.authService.sendLinkForgotPassword(body.email);
+  }
 
   @Post('reset-password')
   async resetPassword(

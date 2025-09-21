@@ -1,4 +1,3 @@
-// email.service.ts
 import { Injectable } from '@nestjs/common';
 import * as nodemailer from 'nodemailer';
 
@@ -24,6 +23,28 @@ export class EmailService {
       to,
       subject,
       text,
+    });
+
+    console.log('E-mail enviado: %s', info.messageId);
+  }
+
+  async sendForgotPasswordMail(to: string, token: string) {
+    const info = await this.transporter.sendMail({
+      from: '"PetHelp" <carolineolv01@gmail.com>',
+      to,
+      subject: 'Recuperação de Senha - PetHelp',
+      text: `Crie uma nova senha usando o seguinte link: http://localhost:3001/login/create-password?token=${token}\nEquipe PetHelp`,
+    });
+
+    console.log('E-mail enviado: %s', info.messageId);
+  }
+
+  async sendCreatePasswordMail(to: string, token: string, nome: string) {
+    const info = await this.transporter.sendMail({
+      from: '"PetHelp" <carolineolv01@gmail.com>',
+      to,
+      subject: 'Criação de Senha - PetHelp',
+      text: `Olá ${nome},\n\nSua conta foi criada com sucesso na plataforma PetHelp.\nCrie uma senha de acesso: http://localhost:3001/login/create-password?token=${token}\nEquipe PetHelp`,
     });
 
     console.log('E-mail enviado: %s', info.messageId);
