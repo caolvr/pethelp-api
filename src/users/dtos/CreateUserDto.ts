@@ -1,5 +1,5 @@
 // create-user.dto.ts
-import { IsNotEmpty, IsString, IsEmail } from 'class-validator';
+import { IsNotEmpty, IsString, IsEmail, IsBoolean } from 'class-validator';
 
 export class CreateUserDto {
   @IsString()
@@ -15,4 +15,10 @@ export class CreateUserDto {
 
   @IsString()
   readonly celular: string;
+
+  @IsBoolean()
+  readonly ativo: boolean;
+
+  @IsBoolean()
+  readonly is_admin: boolean;
 }
