@@ -7,6 +7,7 @@ import {
   IsEnum,
   IsUUID,
   IsUrl,
+  IsDate,
 } from 'class-validator';
 
 export class CreatePetDto {
@@ -19,7 +20,7 @@ export class CreatePetDto {
   readonly especie: string;
 
   @IsString()
-  readonly idade: string;
+  readonly data_nascimento?: string;
 
   @IsOptional()
   @IsString()
