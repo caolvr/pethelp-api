@@ -4,36 +4,14 @@ import { Repository } from 'typeorm';
 import { Pet } from '../entities/pet.entity';
 import { CreatePetDto } from '../dtos/CreatePetDto';
 import { FilterAdocaoDto } from '../dtos/FilterAdocaoDto';
+import { UpdatePetDto } from '../dtos/UpdatePetDto';
 
 @Injectable()
 export class PetsService {
   constructor(@InjectRepository(Pet) private petsRepository: Repository<Pet>) {}
 
-  async findAll(
-    ongId: string,
-    pagination?: { page: number; limit: number },
-  ): Promise<{
-    data: Pet[];
-    meta: { total: number; page: number; lastPage: number; limit: number };
-  }> {
-    const page = Math.max(1, pagination?.page || 1);
-    const limit = Math.min(50, Math.max(1, pagination?.limit || 10));
-    const skip = (page - 1) * limit;
-
-    return this.petsRepository
-      .findAndCount({
-        where: { ong: { id: ongId } },
-        skip,
-        take: limit,
-        order: { nome: 'ASC' },
-      })
-      .then(([data, total]) => {
-        const lastPage = Math.max(1, Math.ceil(total / limit));
-        return {
-          data,
-          meta: { total, page, lastPage, limit },
-        };
-      });
+  findAll(ongId: string): Promise<Pet[]> {
+    return this.petsRepository.find({ where: { ong: { id: ongId } } });
   }
 
   async findAllAdocao(filter?: FilterAdocaoDto): Promise<{
@@ -115,7 +93,7 @@ export class PetsService {
     return await this.petsRepository.save(pet);
   }
 
-  async update(id: string, pet: Pet, ongId: string): Promise<Pet> {
+  async update(id: string, pet: UpdatePetDto, ongId: string): Promise<Pet> {
     await this.petsRepository.update({ id: id, ong: { id: ongId } }, pet);
     const updatedPet = await this.petsRepository.findOneBy({
       id: id,
