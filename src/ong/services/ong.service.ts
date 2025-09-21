@@ -10,7 +10,6 @@ import { CreateOngDto } from '../dtos/CreateOngDto';
 import { User } from 'src/users/entities/user.entity';
 import { EmailService } from 'src/email/services/email.service';
 import { UserService } from 'src/users/services/user.service';
-import * as bcrypt from 'bcryptjs';
 import * as crypto from 'crypto';
 import { PasswordResetToken } from 'src/auth/entities/password-reset-tokens.entity';
 
@@ -57,12 +56,12 @@ export class OngService {
       const { ong, user, token } = await this.dataSource.transaction(
         async (manager) => {
           const ongRepo = manager.getRepository(Ong);
-          const userRepo = manager.getRepository(User);
           const prtRepo = manager.getRepository(PasswordResetToken);
 
-          const existingUser = await userRepo.findOne({
-            where: { email: responsavel.email },
-          });
+          const existingUser = await this.userService.findOne(
+            responsavel.email,
+            manager,
+          );
           if (existingUser) {
             throw new ConflictException('E-mail do responsável já cadastrado.');
           }
@@ -70,16 +69,11 @@ export class OngService {
           const ong = ongRepo.create(ongData);
           await ongRepo.save(ong);
 
-          const tempPassword = crypto.randomBytes(16).toString('hex'); // 32 chars
-          const passwordHash = await bcrypt.hash(tempPassword, 10);
-
-          const user = userRepo.create({
-            ...responsavel,
-            senha: passwordHash,
-            is_admin: true,
-            ong,
-          });
-          await userRepo.save(user);
+          const user = await this.userService.create(
+            responsavel,
+            ong.id,
+            manager,
+          );
 
           const token = crypto.randomBytes(32).toString('hex'); // 64 chars
           const tokenHash = crypto
