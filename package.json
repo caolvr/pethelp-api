@@ -6,9 +6,13 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
+    "migration:generate": "npx typeorm-ts-node-commonjs migration:generate -d ./src/datasource.ts ./src/migrations/AutoMigration",
+    "migration:create": "npx typeorm-ts-node-commonjs migration:create ./src/migrations/NewMigration",
+    "migration:run": "npx typeorm-ts-node-commonjs migration:run -d ./src/datasource.ts",
+    "migration:revert": "npx typeorm-ts-node-commonjs migration:revert -d ./src/datasource.ts",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
-    "start": "nest start",
+    "start": "npm run migration:run && node dist/main",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
@@ -17,11 +21,7 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json",
-    "migration:generate": "npx typeorm-ts-node-commonjs migration:generate -d ./src/datasource.ts ./src/migrations/AutoMigration",
-    "migration:create": "npx typeorm-ts-node-commonjs migration:create ./src/migrations/NewMigration",
-    "migration:run": "npx typeorm-ts-node-commonjs migration:run -d ./src/datasource.ts",
-    "migration:revert": "npx typeorm-ts-node-commonjs migration:revert -d ./src/datasource.ts"
+    "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",
