@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import * as nodemailer from 'nodemailer';
 
 import * as sgMail from '@sendgrid/mail';
+import { text } from 'stream/consumers';
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY as string);
 
@@ -33,24 +34,24 @@ export class EmailService {
   }
 
   async sendForgotPasswordMail(to: string, token: string) {
-    const info = await this.transporter.sendMail({
-      from: '"PetHelp" <carolineolv01@gmail.com>',
+    const info = await sgMail.send({
+      from: '"PETHELP" <carolineolv01@gmail.com>',
       to,
       subject: 'Recuperação de Senha - PetHelp',
-      text: `Crie uma nova senha usando o seguinte link: http://localhost:3001/login/create-password?token=${token}\nEquipe PetHelp`,
+      text: `Crie uma nova senha usando o seguinte link: https://pethelp-api-production.up.railway.app/login/create-password?token=${token}\nEquipe PetHelp`,
     });
 
-    console.log('E-mail enviado: %s', info.messageId);
+    console.log('E-mail enviado: %s', info[0].headers['x-message-id']);
   }
 
   async sendCreatePasswordMail(to: string, token: string, nome: string) {
-    const info = await this.transporter.sendMail({
+    const info = await sgMail.send({
       from: '"PetHelp" <carolineolv01@gmail.com>',
       to,
       subject: 'Criação de Senha - PetHelp',
-      text: `Olá ${nome},\n\nSua conta foi criada com sucesso na plataforma PetHelp.\nCrie uma senha de acesso: http://localhost:3001/login/create-password?token=${token}\nEquipe PetHelp`,
+      text: `Olá ${nome},\n\nSua conta foi criada com sucesso na plataforma PetHelp.\nCrie uma senha de acesso: https://pethelp-api-production.up.railway.app/login/create-password?token=${token}\nEquipe PetHelp`,
     });
 
-    console.log('E-mail enviado: %s', info.messageId);
+    console.log('E-mail enviado: %s', info[0].headers['x-message-id']);
   }
 }
