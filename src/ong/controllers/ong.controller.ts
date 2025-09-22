@@ -6,6 +6,7 @@ import {
   Param,
   Post,
   Put,
+  Req,
   UseGuards,
 } from '@nestjs/common';
 import { OngService } from '../services/ong.service';
@@ -13,6 +14,7 @@ import { Ong } from '../entities/ong.entity';
 import { CreateOngDto } from '../dtos/CreateOngDto';
 import { TokenValidationGuard } from 'src/auth/guards/token-validation.guard';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { Request } from 'express';
 
 @Controller('ongs')
 export class OngController {
@@ -29,7 +31,8 @@ export class OngController {
 
   @UseGuards(JwtAuthGuard)
   @Get()
-  findAll() {
+  findAll(@Req() req: Request) {
+    console.log('Cookies:', req.cookies);
     return this.ongService.findAll();
   }
 
