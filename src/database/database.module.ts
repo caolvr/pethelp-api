@@ -12,7 +12,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       password: 'r00t',
       database: 'pethelp',
       entities: [__dirname + '/../**/*.entity.{ts,js}'],
-      synchronize: true, // só em dev!
+      synchronize: false,
+      migrations: [__dirname + '/../migrations/*{.ts,.js}'],
+      migrationsRun: true,
       logging: true,
     }),
   ],
