@@ -8,7 +8,7 @@ async function bootstrap() {
     origin: ['http://localhost:3001', 'https://pethelp-web.vercel.app'],
     credentials: true,
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
-    allowedHeaders: 'Content-Type, Accept, Authorization',
+    allowedHeaders: '*',
   };
 
   const app = await NestFactory.create(AppModule);
