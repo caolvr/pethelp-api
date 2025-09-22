@@ -38,7 +38,7 @@ export class EmailService {
       from: '"PETHELP" <carolineolv01@gmail.com>',
       to,
       subject: 'Recuperação de Senha - PetHelp',
-      text: `Crie uma nova senha usando o seguinte link: https://pethelp-api-production.up.railway.app/login/create-password?token=${token}\nEquipe PetHelp`,
+      text: `Crie uma nova senha usando o seguinte link: https://pethelp-web.vercel.app/login/create-password?token=${token}\nEquipe PetHelp`,
     });
 
     console.log('E-mail enviado: %s', info[0].headers['x-message-id']);
@@ -49,7 +49,7 @@ export class EmailService {
       from: '"PetHelp" <carolineolv01@gmail.com>',
       to,
       subject: 'Criação de Senha - PetHelp',
-      text: `Olá ${nome},\n\nSua conta foi criada com sucesso na plataforma PetHelp.\nCrie uma senha de acesso: https://pethelp-api-production.up.railway.app/login/create-password?token=${token}\nEquipe PetHelp`,
+      text: `Olá ${nome},\n\nSua conta foi criada com sucesso na plataforma PetHelp.\nCrie uma senha de acesso: https://pethelp-web.vercel.app/login/create-password?token=${token}\nEquipe PetHelp`,
     });
 
     console.log('E-mail enviado: %s', info[0].headers['x-message-id']);
