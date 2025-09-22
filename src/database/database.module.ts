@@ -6,16 +6,12 @@ import { TypeOrmModule } from '@nestjs/typeorm';
   imports: [
     TypeOrmModule.forRoot({
       type: 'mysql',
-      host: 'localhost',
-      port: 3306,
-      username: 'root',
-      password: 'r00t',
-      database: 'pethelp',
-      entities: [__dirname + '/../**/*.entity.{ts,js}'],
+      url: process.env.DATABASE_URL,
       synchronize: false,
-      migrations: [__dirname + '/../migrations/*{.ts,.js}'],
-      migrationsRun: true,
       logging: true,
+      entities: [__dirname + '/../../dist/**/*.entity.js'],
+      migrations: [__dirname + '/../../dist/migrations/*.js'],
+      migrationsRun: true,
     }),
   ],
 })
