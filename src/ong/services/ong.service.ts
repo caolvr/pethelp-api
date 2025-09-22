@@ -7,7 +7,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, DataSource } from 'typeorm';
 import { Ong } from '../entities/ong.entity';
 import { CreateOngDto } from '../dtos/CreateOngDto';
-import { User } from 'src/users/entities/user.entity';
+import { User } from '../../users/entities/user.entity';
 import { EmailService } from 'src/email/services/email.service';
 import { UserService } from 'src/users/services/user.service';
 import * as crypto from 'crypto';

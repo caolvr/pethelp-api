@@ -8,7 +8,6 @@ import { EmailService } from 'src/email/services/email.service';
 import { UserService } from 'src/users/services/user.service';
 import { LoginDto } from '../dtos/LoginDto';
 import { Repository } from 'typeorm';
-import { User } from 'src/users/entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { HashingService } from './hashing.service';
 import jwtConfig from '../config/jwt.config';

@@ -1,4 +1,4 @@
-import { Ong } from 'src/ong/entities/ong.entity';
+import { Ong } from '../../ong/entities/ong.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,

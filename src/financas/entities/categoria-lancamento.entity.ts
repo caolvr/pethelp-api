@@ -7,7 +7,7 @@ import {
   JoinColumn,
 } from 'typeorm';
 import { Lancamento } from './lancamento.entity';
-import { Ong } from 'src/ong/entities/ong.entity';
+import { Ong } from '../../ong/entities/ong.entity';
 
 @Entity('categoria_lancamento')
 export class CategoriaLancamento {

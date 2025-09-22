@@ -13,7 +13,7 @@ import * as bcrypt from 'bcryptjs';
 import * as crypto from 'crypto';
 import { AuthService } from 'src/auth/services/auth.service';
 import { EmailService } from 'src/email/services/email.service';
-import { PasswordResetToken } from 'src/auth/entities/password-reset-tokens.entity';
+import { PasswordResetToken } from '../../auth/entities/password-reset-tokens.entity';
 
 @Injectable()
 export class UserService {
