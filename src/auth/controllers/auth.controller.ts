@@ -48,6 +48,7 @@ export class AuthController {
       sameSite: 'none',
       path: '/',
       maxAge: maxAgeMs,
+      domain: 'pethelp-api-production.up.railway.app',
     });
 
     return { access_token };
