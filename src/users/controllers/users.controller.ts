@@ -5,6 +5,7 @@ import {
   Param,
   Post,
   Put,
+  Req,
   UseGuards,
 } from '@nestjs/common';
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
@@ -12,6 +13,7 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { CreateUserDto } from '../dtos/CreateUserDto';
 import { UserService } from '../services/user.service';
 import { UpdateUserDto } from '../dtos/UpdateUserDto';
+import { Request } from 'express';
 
 @Controller('users')
 export class UsersController {
@@ -37,6 +39,12 @@ export class UsersController {
   @Get()
   findAll(@CurrentUser('ongId') ongId: string) {
     return this.userService.findAll(ongId);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('me')
+  getMe(@Req() req: Request) {
+    return req.user;
   }
 
   @UseGuards(JwtAuthGuard)
