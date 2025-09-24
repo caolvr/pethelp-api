@@ -44,11 +44,10 @@ export class AuthController {
 
     res.cookie('access_token', access_token, {
       httpOnly: true,
-      secure: true,
-      sameSite: 'none',
+      secure: false,
+      sameSite: 'lax',
       path: '/',
       maxAge: maxAgeMs,
-      domain: 'pethelp-api-production.up.railway.app',
     });
 
     return { access_token };
