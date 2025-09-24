@@ -2,6 +2,8 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { join } from 'path';
 import { existsSync } from 'fs';
+import * as dotenv from 'dotenv';
+dotenv.config();
 
 const ENTITIES = [join(__dirname, '/../**/*.entity.js')];
 const MIGRATIONS = [join(__dirname, '/../migrations/*.js')];
