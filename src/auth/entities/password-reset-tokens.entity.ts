@@ -3,6 +3,7 @@ import {
   CreateDateColumn,
   Entity,
   Index,
+  JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -14,16 +15,20 @@ export class PasswordResetToken {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => User, { onDelete: 'CASCADE', eager: false })
+  @ManyToOne(() => User)
+  @JoinColumn({ name: 'userId' })
   user: User;
 
   @Column({ name: 'token_hash', type: 'varchar', length: 64, unique: true })
   tokenHash: string;
 
-  @Column({ type: 'timestamp' })
+  @Column({ type: process.env.NODE_ENV === 'test' ? 'text' : 'timestamp' })
   expires_at: Date;
 
-  @Column({ type: 'timestamp', nullable: true })
+  @Column({
+    type: process.env.NODE_ENV === 'test' ? 'text' : 'timestamp',
+    nullable: true,
+  })
   used_at?: Date | null;
 
   @CreateDateColumn()

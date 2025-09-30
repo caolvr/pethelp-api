@@ -16,22 +16,34 @@ export class Pet {
   @Column('varchar', { length: 50 })
   nome: string;
 
-  @Column({ type: 'enum', enum: ['cao', 'gato'] })
+  @Column({
+    type: process.env.NODE_ENV === 'test' ? 'simple-enum' : 'enum',
+    enum: ['cao', 'gato'],
+  })
   especie: string;
 
-  @Column({ type: 'enum', enum: ['macho', 'femea'] })
+  @Column({
+    type: process.env.NODE_ENV === 'test' ? 'simple-enum' : 'enum',
+    enum: ['macho', 'femea'],
+  })
   sexo: string;
 
   @Column({ type: 'date', nullable: true })
   data_nascimento: Date | null;
 
-  @Column({ type: 'enum', enum: ['pequeno', 'medio', 'grande'] })
+  @Column({
+    type: process.env.NODE_ENV === 'test' ? 'simple-enum' : 'enum',
+    enum: ['pequeno', 'medio', 'grande'],
+  })
   porte: string;
 
   @Column('varchar', { length: 350, nullable: true })
   informacoes?: string;
 
-  @Column({ type: 'enum', enum: ['disponivel', 'adotado'] })
+  @Column({
+    type: process.env.NODE_ENV === 'test' ? 'simple-enum' : 'enum',
+    enum: ['disponivel', 'adotado'],
+  })
   status?: string;
 
   @Column('varchar', { length: 200, nullable: true })

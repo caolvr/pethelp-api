@@ -17,7 +17,10 @@ export class CategoriaLancamento {
   @Column({ length: 100 })
   nome: string;
 
-  @Column({ type: 'enum', enum: ['receita', 'despesa'] })
+  @Column({
+    type: process.env.NODE_ENV === 'test' ? 'simple-enum' : 'enum',
+    enum: ['receita', 'despesa'],
+  })
   tipo_categoria: string;
 
   @ManyToOne(() => Ong)
