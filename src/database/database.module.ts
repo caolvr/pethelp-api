@@ -3,10 +3,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { join } from 'path';
 import { existsSync } from 'fs';
 import * as dotenv from 'dotenv';
+
 dotenv.config();
 
-const ENTITIES = [join(__dirname, '/../**/*.entity.js')];
-const MIGRATIONS = [join(__dirname, '/../migrations/*.js')];
+const ENTITIES = [join(__dirname, '/../**/*.entity{.ts,.js}')];
+const MIGRATIONS = [join(__dirname, '/../migrations/*{.ts,.js}')];
 
 console.log('[DB PATHS]', {
   __dirname,
@@ -16,17 +17,33 @@ console.log('[DB PATHS]', {
   migrationsDirExists: existsSync(join(__dirname, '/../migrations')),
 });
 
-console.log('DATABASE_URL:', process.env.DATABASE_URL);
 @Module({
   imports: [
-    TypeOrmModule.forRoot({
-      type: 'mysql',
-      url: process.env.DATABASE_URL,
-      synchronize: false,
-      logging: true,
-      entities: ENTITIES,
-      migrations: MIGRATIONS,
-      migrationsRun: true,
+    TypeOrmModule.forRootAsync({
+      useFactory: async () => {
+        if (process.env.NODE_ENV === 'test') {
+          console.log('Usando SQLite para testes');
+          return {
+            type: 'sqlite' as const,
+            database: ':memory:',
+            dropSchema: true,
+            entities: ENTITIES,
+            synchronize: true,
+            logging: ['query', 'error'],
+          };
+        }
+
+        console.log('Usando MySQL', process.env.DATABASE_URL);
+        return {
+          type: 'mysql' as const,
+          url: process.env.DATABASE_URL,
+          synchronize: false,
+          logging: true,
+          entities: ENTITIES,
+          migrations: MIGRATIONS,
+          migrationsRun: true,
+        };
+      },
     }),
   ],
 })
