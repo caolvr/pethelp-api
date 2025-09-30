@@ -53,11 +53,9 @@ export class OngService {
     const { responsavel, ...ongData } = createOngDto;
 
     try {
-      const { ong, user, token } = await this.dataSource.transaction(
+      const { ong, user } = await this.dataSource.transaction(
         async (manager) => {
           const ongRepo = manager.getRepository(Ong);
-          const prtRepo = manager.getRepository(PasswordResetToken);
-
           const existingUser = await this.userService.findOne(
             responsavel.email,
             manager,
@@ -69,40 +67,15 @@ export class OngService {
           const ong = ongRepo.create(ongData);
           await ongRepo.save(ong);
 
-          const user = await this.userService.create(
+          const user = await this.userService.createResponsavel(
             responsavel,
-            ong.id,
+            ong,
             manager,
           );
 
-          const token = crypto.randomBytes(32).toString('hex'); // 64 chars
-          const tokenHash = crypto
-            .createHash('sha256')
-            .update(token)
-            .digest('hex');
-          const expires_at = new Date(Date.now() + 48 * 60 * 60 * 1000); // 48h
-
-          await prtRepo.save(
-            prtRepo.create({
-              user,
-              tokenHash,
-              expires_at,
-            }),
-          );
-
-          return { ong, user, token };
+          return { ong, user };
         },
       );
-
-      // try {
-      //   await this.emailService.sendMail(
-      //     responsavel.email,
-      //     'Bem-vindo à Plataforma PetHelp',
-      //     `Olá ${responsavel.nome},\n\nSua ONG foi registrada com sucesso na plataforma PetHelp.\nCrie uma senha para sua conta: http://localhost:3001/login/create-password?token=${token}\nEquipe PetHelp`,
-      //   );
-      // } catch (error) {
-      //   console.error('Erro ao enviar e-mail ao responsável:', error);
-      // }
 
       return ong;
     } catch (e: any) {

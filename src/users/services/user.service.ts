@@ -14,6 +14,7 @@ import * as crypto from 'crypto';
 import { AuthService } from 'src/auth/services/auth.service';
 import { EmailService } from 'src/email/services/email.service';
 import { PasswordResetToken } from '../../auth/entities/password-reset-tokens.entity';
+import { Ong } from 'src/ong/entities/ong.entity';
 
 @Injectable()
 export class UserService {
@@ -63,9 +64,27 @@ export class UserService {
     });
   }
 
-  async create(
+  async create(createUserDto: CreateUserDto, ongId: string): Promise<User> {
+    const repo = this.userRepository;
+    const tempPassword = crypto.randomBytes(16).toString('hex');
+    const passwordHash = await bcrypt.hash(tempPassword, 10);
+
+    const user = repo.create({
+      ...createUserDto,
+      senha: passwordHash,
+      ong: { id: ongId },
+    });
+
+    const savedUser = await repo.save(user);
+
+    await this.sendLinkCreatePassword(savedUser.email);
+
+    return savedUser;
+  }
+
+  async createResponsavel(
     createUserDto: CreateUserDto,
-    ongId: string,
+    ong: Ong,
     manager?: EntityManager,
   ): Promise<User> {
     const repo = manager ? manager.getRepository(User) : this.userRepository;
@@ -75,7 +94,7 @@ export class UserService {
     const user = repo.create({
       ...createUserDto,
       senha: passwordHash,
-      ong: { id: ongId },
+      ong,
     });
 
     const savedUser = await repo.save(user);
