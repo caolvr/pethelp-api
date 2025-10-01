@@ -6,7 +6,6 @@ import {
 } from '@nestjs/common';
 import { EmailService } from 'src/email/services/email.service';
 import { UserService } from 'src/users/services/user.service';
-import { LoginDto } from '../dtos/LoginDto';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { HashingService } from './hashing.service';
@@ -88,7 +87,12 @@ export class AuthService {
 
     const now = new Date();
 
-    if (!prt || prt.used_at || prt.expires_at < now) {
+    if (!prt) {
+      throw new UnauthorizedException('Token inválido ou expirado');
+    }
+
+    const expiresAt = new Date(prt.expires_at + 'Z');
+    if (prt.used_at || expiresAt < now) {
       throw new UnauthorizedException('Token inválido ou expirado');
     }
 
