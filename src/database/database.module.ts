@@ -29,7 +29,7 @@ console.log('[DB PATHS]', {
             dropSchema: true,
             entities: ENTITIES,
             synchronize: true,
-            logging: ['query', 'error'],
+            logging: ['error'],
           };
         }
 
